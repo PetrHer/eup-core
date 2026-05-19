@@ -1,0 +1,40 @@
+{
+    "name": "jtfg-eup-core",
+    "version": "0.1.0",
+    "description": "Core Node.js module",
+    "main": "src/index.ts",
+    "type": "commonjs",
+    "files": [
+        "src"
+    ],
+    "scripts": {
+        "build": "tsup",
+        "dev": "tsup --watch",
+        "typecheck": "tsc --noEmit",
+        "clean": "rimraf dist",
+        "prepublishOnly": "npm run build"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "MIT",
+    "dependencies": {
+        "@microsoft/microsoft-graph-types": "^2.43.1",
+        "@microsoft/sp-webpart-base": "^1.19.0",
+        "@pnp/sp": "^4.20.0",
+        "@syncfusion/ej2-react-inputs": "^26.2.14",
+        "@syncfusion/ej2-react-navigations": "^26.2.12",
+        "jszip": "^3.10.1",
+        "lz-string": "^1.5.0",
+        "react-hook-form": "^7.76.0",
+        "zod": "^3.25.76"
+    },
+    "devDependencies": {
+        "@types/jest": "^27.5.2",
+        "jest": "^27.5.1",
+        "jest-environment-jsdom": "^27.5.1",
+        "rimraf": "^6.1.3",
+        "ts-jest": "^27.1.5",
+        "tsup": "^8.5.1",
+        "typescript": "^4.7.4"
+    }
+}
