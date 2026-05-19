@@ -17,6 +17,7 @@
         "dist"
     ],
     "scripts": {
+        "test": "jest",
         "build": "tsup",
         "dev": "tsup --watch",
         "typecheck": "tsc --noEmit",
@@ -48,12 +49,13 @@
     },
     "peerDependencies": {
         "@microsoft/sp-core-library": "^1.19.0",
-        "@microsoft/sp-webpart-base": "^1.19.0",
         "@microsoft/sp-http": "^1.19.0",
+        "@microsoft/sp-webpart-base": "^1.19.0",
         "@pnp/sp": "^4.20.0"
     },
     "devDependencies": {
         "@types/jest": "^27.5.2",
+        "identity-obj-proxy": "^3.0.0",
         "jest": "^27.5.1",
         "jest-environment-jsdom": "^27.5.1",
         "rimraf": "^6.1.3",

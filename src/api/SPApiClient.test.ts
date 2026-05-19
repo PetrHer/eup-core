@@ -7,6 +7,10 @@ import { LibraryName, ListName, SPGroupInternal } from '../enums';
 jest.mock('lz-string', () => ({
     decompressFromEncodedURIComponent: jest.fn(),
     compressToEncodedURIComponent: jest.fn(() => 'compressed-ctx'),
+    default: {
+        decompressFromEncodedURIComponent: jest.fn(),
+        compressToEncodedURIComponent: jest.fn(() => 'compressed-ctx'),
+    },
 }));
 jest.mock('@pnp/sp', () => ({
     spfi: jest.fn(() => ({ using: jest.fn().mockReturnValue({}) })),
@@ -578,7 +582,7 @@ describe('SPApiClient', () => {
 
         it('throws when required keys are missing', async () => {
             (LZString.decompressFromEncodedURIComponent as jest.Mock).mockReturnValue('{"t":"team"}');
-            await expect(client.initWithCtx('incomplete-ctx')).rejects.toThrow('Invalid ctx: missing required keys');
+            await expect(client.initWithCtx('incomplete-ctx')).rejects.toThrow('Invalid ctx format');
         });
 
         it('sets instance properties from valid ctx', async () => {

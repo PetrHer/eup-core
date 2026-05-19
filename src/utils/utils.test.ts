@@ -1,8 +1,12 @@
 /* eslint-disable no-undef */
-jest.mock('jszip', () => jest.fn().mockImplementation(() => ({
-    file: jest.fn(),
-    generateAsync: jest.fn().mockResolvedValue(new Blob(['zip'])),
-})));
+jest.mock('jszip', () => {
+    const MockJSZip = jest.fn().mockImplementation(() => ({
+        file: jest.fn(),
+        generateAsync: jest.fn().mockResolvedValue(new Blob(['zip'])),
+    }));
+    (MockJSZip as any).default = MockJSZip;
+    return MockJSZip;
+});
 
 import { MenuItemModel } from '@syncfusion/ej2-react-navigations';
 

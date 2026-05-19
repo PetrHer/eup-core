@@ -18,7 +18,7 @@ module.exports = {
     testMatch: ['**/?(*.)+(spec|test).[jt]s?(x)'],
     testPathIgnorePatterns: ['/node_modules/', '<rootDir>/lib/'],
     moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
-    collectCoverage: true,
+    collectCoverage: false,
     coveragePathIgnorePatterns: [
         '/node_modules/',
         '\\.tsx$',

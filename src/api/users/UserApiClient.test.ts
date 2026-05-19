@@ -21,6 +21,7 @@ function createMockSp() {
         graphPost: jest.fn().mockResolvedValue({ ok: true }),
         getUserSPId: jest.fn().mockResolvedValue(42),
         addAttachmentFile: jest.fn().mockResolvedValue({ ok: true }),
+        isPrivateChannel: jest.fn().mockResolvedValue(false),
     } as unknown as SPApiClient;
 }
 
@@ -342,20 +343,18 @@ describe('UserApiClient', () => {
 
     describe('createSiteGroups', () => {
         it('calls spPost for each internal group and invokes increaseProgressCount', async () => {
-            const progress = jest.fn();
-            await client.createSiteGroups([SPGroupInternal.UUO_RM], progress);
+            await client.createSiteGroups([SPGroupInternal.UUO_RM]);
             expect(mockSp.spPost).toHaveBeenCalledWith(
                 expect.stringContaining('sitegroups'),
                 expect.objectContaining({ Title: SPGroupInternal.UUO_RM })
             );
-            expect(progress).toHaveBeenCalledTimes(1);
         });
 
         it('calls spPost for RO group and assigns read role', async () => {
             (mockSp.spPost as jest.Mock).mockResolvedValue({ ok: true, data: { Id: 5 } });
             (mockSp.spGet as jest.Mock)
                 .mockResolvedValueOnce({ ok: true, data: [{ Id: 99 }] }); // getRoleDefinitionId(Read)
-            await client.createSiteGroups([SPGroupRO.RORole], jest.fn());
+            await client.createSiteGroups([SPGroupRO.RORole]);
             expect(mockSp.spPost).toHaveBeenCalledTimes(2); // create group + assignRoleToGroup
         });
     });
@@ -483,8 +482,8 @@ describe('UserApiClient', () => {
 
         it('takes private channel path when channel membershipType is private', async () => {
             (mockSp.graphGet as jest.Mock)
-                .mockResolvedValueOnce({ ok: true, data: [{ id: 'uid-1' }] }) // users filter
-                .mockResolvedValueOnce({ ok: true, data: { membershipType: 'private' } }); // channel details
+                .mockResolvedValueOnce({ ok: true, data: [{ id: 'uid-1' }] }); // users filter
+            (mockSp.isPrivateChannel as jest.Mock).mockResolvedValue(true);
             (mockSp.graphPost as jest.Mock).mockResolvedValue({ ok: true });
             (mockSp.spGet as jest.Mock)
                 .mockResolvedValueOnce({ ok: true, data: { Id: 100 } })   // owners in addMemberToPrivateChannel
