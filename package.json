@@ -1,5 +1,5 @@
 {
-    "name": "jtfg-eup-core",
+    "name": "@petrher/jtfg-eup-core",
     "version": "0.1.0",
     "description": "Core Node.js module",
     "main": "dist/index.cjs",
@@ -28,7 +28,11 @@
     "author": "",
     "license": "MIT",
     "publishConfig": {
-        "access": "public"
+        "registry": "https://npm.pkg.github.com"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/petrher/jtfg-eup-core.git"
     },
     "dependencies": {
         "@microsoft/microsoft-graph-types": "^2.43.1",
