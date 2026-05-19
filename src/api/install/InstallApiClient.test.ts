@@ -336,15 +336,13 @@ describe('InstallApiClient', () => {
     });
 
     describe('createListFolders', () => {
-        it('calls increaseProgressCount for each folder ensured', async () => {
-            const cb = jest.fn();
-            await client.createListFolders(cb);
-            expect(cb).toHaveBeenCalledTimes(7);
+        it('calls ensureListFolder 7 times for all lists', async () => {
+            await client.createListFolders();
+            expect(mockSp.spGet).toHaveBeenCalledTimes(7);
         });
 
         it('calls ensureListFolder with channel name for each list', async () => {
-            const cb = jest.fn();
-            await client.createListFolders(cb);
+            await client.createListFolders();
             expect(mockSp.spGet).toHaveBeenCalledTimes(7);
         });
     });
@@ -428,15 +426,8 @@ describe('InstallApiClient', () => {
     });
 
     describe('initRequests', () => {
-        it('calls increaseProgressCount three times', async () => {
-            const cb = jest.fn();
-            await client.initRequests(cb);
-            expect(cb).toHaveBeenCalledTimes(3);
-        });
-
         it('calls ensureFolder for channel name and options folders', async () => {
-            const cb = jest.fn();
-            await client.initRequests(cb);
+            await client.initRequests();
             expect(mockSp.ensureFolder).toHaveBeenCalledWith(
                 expect.any(String),
                 'TestChannel'
@@ -510,8 +501,7 @@ describe('InstallApiClient', () => {
             const mainSpy = jest.spyOn(client as any, 'createMainFolderInDocumentStructure').mockResolvedValue(undefined);
             const catSpy = jest.spyOn(client as any, 'createCategories').mockResolvedValue([{ itemId: 1, templateId: 10 }]);
 
-            const cb = jest.fn();
-            const result = await client.createFoldersFromTemplates([], cb);
+            const result = await client.createFoldersFromTemplates([]);
 
             expect(mainSpy).toHaveBeenCalled();
             expect(catSpy).toHaveBeenCalled();
@@ -528,7 +518,7 @@ describe('InstallApiClient', () => {
                 .mockResolvedValueOnce({ ok: true, data: { Id: 'list-id' } }); // lookup list
             jest.spyOn(client as any, 'ensureFoldersInDocumentLibrary').mockResolvedValue(undefined);
 
-            await client.ensureDocumentLibrary('Template1', jest.fn());
+            await client.ensureDocumentLibrary('Template1');
 
             expect(mockSp.spPost).toHaveBeenCalled();
         });
@@ -545,7 +535,7 @@ describe('InstallApiClient', () => {
                 .mockResolvedValueOnce({ ok: true, data: { Id: 'list-id' } });
             jest.spyOn(client as any, 'ensureFoldersInDocumentLibrary').mockResolvedValue(undefined);
 
-            await client.ensureDocumentLibrary('Template1', jest.fn());
+            await client.ensureDocumentLibrary('Template1');
 
             // Only the final versioning spPost should be called
             expect(mockSp.spPost).toHaveBeenCalledTimes(1);
@@ -558,7 +548,7 @@ describe('InstallApiClient', () => {
                 .mockResolvedValueOnce({ ok: true, data: { Id: 'new-id' } });
             jest.spyOn(client as any, 'ensureFoldersInDocumentLibrary').mockResolvedValue(undefined);
 
-            await client.ensureDocumentLibrary('Template1', jest.fn());
+            await client.ensureDocumentLibrary('Template1');
 
             expect(mockSp.spPatch).toHaveBeenCalledWith(
                 expect.stringContaining('DocumentType'),
@@ -574,9 +564,8 @@ describe('InstallApiClient', () => {
             (mockSp.spGet as jest.Mock).mockResolvedValue({ ok: true, data: [{ Id: 1 }, { Id: 2 }] });
             jest.spyOn(client as any, 'copyRequiredfiles').mockResolvedValue(undefined);
             const folderSpy = jest.spyOn(client, 'ensureListFolder').mockResolvedValue(undefined);
-            const cb = jest.fn();
 
-            await client.addRequiredFiles(cb, [], 'template');
+            await client.addRequiredFiles([], 'template');
 
             expect(folderSpy).toHaveBeenCalledTimes(2);
         });
@@ -587,21 +576,12 @@ describe('InstallApiClient', () => {
             jest.spyOn(client, 'ensureListFolder').mockResolvedValue(undefined);
             const relations = [{ itemId: 1, templateId: 10 }, { itemId: 2, templateId: 20 }];
 
-            await client.addRequiredFiles(jest.fn(), relations, 'template');
+            await client.addRequiredFiles(relations, 'template');
 
             expect(copySpy).toHaveBeenCalledTimes(2);
         });
 
-        it('calls increaseProgressCount once when done', async () => {
-            (mockSp.spGet as jest.Mock).mockResolvedValue({ ok: true, data: [] });
-            jest.spyOn(client as any, 'copyRequiredfiles').mockResolvedValue(undefined);
-            jest.spyOn(client, 'ensureListFolder').mockResolvedValue(undefined);
-            const cb = jest.fn();
 
-            await client.addRequiredFiles(cb, [], 'template');
-
-            expect(cb).toHaveBeenCalledTimes(1);
-        });
     });
 
     // ─── ensureListAndCopyItemsIntoChannelFolder ──────────────────────────────
@@ -753,8 +733,7 @@ describe('InstallApiClient', () => {
                 ],
             });
 
-            const cb = jest.fn();
-            await client.initRequests(cb);
+            await client.initRequests();
 
             expect(mockSp.spGetBinary).toHaveBeenCalledTimes(2);
             expect(mockSp.spPostBinary).toHaveBeenCalledTimes(2);
@@ -763,8 +742,7 @@ describe('InstallApiClient', () => {
         it('does nothing when template list is empty', async () => {
             (mockSp.spGet as jest.Mock).mockResolvedValue({ ok: true, data: [] });
 
-            const cb = jest.fn();
-            await client.initRequests(cb);
+            await client.initRequests();
 
             expect(mockSp.spGetBinary).not.toHaveBeenCalled();
         });
