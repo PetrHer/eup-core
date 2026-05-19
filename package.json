@@ -2,21 +2,34 @@
     "name": "jtfg-eup-core",
     "version": "0.1.0",
     "description": "Core Node.js module",
-    "main": "src/index.ts",
+    "main": "dist/index.cjs",
+    "module": "dist/index.js",
+    "types": "dist/index.d.ts",
     "type": "commonjs",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "require": "./dist/index.cjs",
+            "import": "./dist/index.js"
+        }
+    },
     "files": [
-        "src"
+        "dist"
     ],
     "scripts": {
         "build": "tsup",
         "dev": "tsup --watch",
         "typecheck": "tsc --noEmit",
         "clean": "rimraf dist",
-        "prepublishOnly": "npm run build"
+        "prepublishOnly": "npm run clean && npm run typecheck && npm run build",
+        "pack:check": "npm pack --dry-run"
     },
     "keywords": [],
     "author": "",
     "license": "MIT",
+    "publishConfig": {
+        "access": "public"
+    },
     "dependencies": {
         "@microsoft/microsoft-graph-types": "^2.43.1",
         "@microsoft/sp-webpart-base": "^1.19.0",
