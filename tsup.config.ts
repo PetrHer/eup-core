@@ -14,5 +14,8 @@ export default defineConfig({
     splitting: false,
     treeshake: true,
     skipNodeModulesBundle: true,
-    external: ["react", "react-dom", "@fluentui/react-components"]
+    external: ["@microsoft/sp-core-library",
+        "@microsoft/sp-webpart-base",
+        "@microsoft/sp-http",
+        "@pnp/sp"]
 });

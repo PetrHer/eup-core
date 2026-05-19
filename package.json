@@ -46,6 +46,12 @@
         "react-hook-form": "^7.76.0",
         "zod": "^3.25.76"
     },
+    "peerDependencies": {
+        "@microsoft/sp-core-library": "^1.19.0",
+        "@microsoft/sp-webpart-base": "^1.19.0",
+        "@microsoft/sp-http": "^1.19.0",
+        "@pnp/sp": "^4.20.0"
+    },
     "devDependencies": {
         "@types/jest": "^27.5.2",
         "jest": "^27.5.1",
