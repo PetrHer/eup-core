@@ -3,14 +3,14 @@
     "version": "0.1.2",
     "description": "Core Node.js module",
     "main": "dist/index.cjs",
-    "module": "dist/index.js",
+    "module": "dist/index.mjs",
     "types": "dist/index.d.ts",
     "type": "commonjs",
     "exports": {
         ".": {
             "types": "./dist/index.d.ts",
             "require": "./dist/index.cjs",
-            "import": "./dist/index.js"
+            "import": "./dist/index.mjs"
         }
     },
     "files": [
