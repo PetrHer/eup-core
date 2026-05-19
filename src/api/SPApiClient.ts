@@ -685,6 +685,10 @@ export default class SPApiClient extends BaseApiClient implements ISPApiClient {
         return teamName;
     }
 
+    public getUserEmail(): string {
+        return this.webPartContext.pageContext.user.email;
+    }
+
     /**
      * Gets the user's role in a Teams channel.
      * @param teamId The team ID.

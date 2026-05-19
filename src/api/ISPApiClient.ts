@@ -33,4 +33,5 @@ export interface ISPApiClient {
     log: (message: string, data?: any) => Promise<void>;
     getSiteGroupByName: (groupName: string, webUrl?: string) => Promise<ISiteGroup | undefined>;
     isPrivateChannel: () => Promise<boolean>;
+    getUserEmail: () => string;
 }

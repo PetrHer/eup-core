@@ -182,12 +182,12 @@ export default class UserApiClient implements IUserApiClient {
      * @param increaseProgressCount A callback function to track progress during the group creation process.
      * @returns A promise that resolves when all site groups are created.
      */
-    public async createSiteGroups(groupNames: (SPGroupExternal | SPGroupInternal | SPGroupRO)[], increaseProgressCount: () => void): Promise<void> {
+    public async createSiteGroups(groupNames: (SPGroupExternal | SPGroupInternal | SPGroupRO)[]): Promise<void> {
         for (let i = 0; i < groupNames.length; i++) {
             if (Object.values(SPGroupRO).includes(groupNames[i] as SPGroupRO)) {
                 await this.createSiteROGroup(groupNames[i] as SPGroupRO);
             } else {
-                await this.createSiteGroup(groupNames[i] as (SPGroupExternal | SPGroupInternal), increaseProgressCount);
+                await this.createSiteGroup(groupNames[i] as (SPGroupExternal | SPGroupInternal));
             }
         }
     }
@@ -198,11 +198,10 @@ export default class UserApiClient implements IUserApiClient {
      * @param increaseProgressCount A callback function to track progress after each group creation.
      * @returns A promise that resolves when the site group is created.
      */
-    private async createSiteGroup(groupName: SPGroupExternal | SPGroupInternal, increaseProgressCount: () => void): Promise<void> {
+    private async createSiteGroup(groupName: SPGroupExternal | SPGroupInternal): Promise<void> {
         const apiUrl = `${this.sp.getAbsoluteUrl()}/_api/web/sitegroups`;
         const body = { Title: groupName };
         await this.sp.spPost(apiUrl, body);
-        increaseProgressCount();
     }
 
     private async createSiteROGroup(groupName: SPGroupRO): Promise<void> {

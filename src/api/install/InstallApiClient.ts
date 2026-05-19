@@ -24,16 +24,12 @@ export default class InstallApiClient implements IInstallApiClient {
  * calling the provided progress callback after each step.
  * Finally, copies the request templates.
  * 
- * @param increaseProgressCount - A callback function to indicate progress after each step.
  * @returns Promise<void> - A promise that resolves when all initialization steps are complete.
  */
-    public async initRequests(increaseProgressCount: () => void): Promise<void> {
+    public async initRequests(): Promise<void> {
         await this.createRequestFolder(this.sp.getChannelName());
-        increaseProgressCount();
         await this.createRequestFolder('options');
-        increaseProgressCount();
         await this.copyRequestTemplates();
-        increaseProgressCount();
     }
 
     public async ensureIUPData(): Promise<void> {
@@ -118,14 +114,12 @@ export default class InstallApiClient implements IInstallApiClient {
     /**
      * ensures document library and then creates folders
      * @param folderTemplates 
-     * @param increaseProgressCount 
      */
-    public async createFoldersFromTemplates(templateItems: ITemplateContent[], increaseProgressCount: () => void): Promise<ITemplateItemRelation[]> {
+    public async createFoldersFromTemplates(templateItems: ITemplateContent[]): Promise<ITemplateItemRelation[]> {
         // const folderTemplates = await this.getFolderTemplates(selectedTemplate);
         //await this.ensureDocumentLibrary();
         await this.createMainFolderInDocumentStructure();
-        // await this.generateFoldersFromTemplates(folderTemplates, '', increaseProgressCount);
-        const ids = await this.createCategories(templateItems, increaseProgressCount);
+        const ids = await this.createCategories(templateItems);
         return ids;
     }
 
@@ -236,26 +230,16 @@ export default class InstallApiClient implements IInstallApiClient {
          * Ensures the existence of necessary folders for different lists under the current channel,
          * invoking a progress increment callback after each folder is created or confirmed.
          *
-         * @param increaseProgressCount - Callback function to increment progress tracking.
          * @returns Promise that resolves when all folders have been ensured.
          */
-    public async createListFolders(increaseProgressCount: () => void): Promise<void> {
+    public async createListFolders(): Promise<void> {
         await this.ensureListFolder(this.sp.getChannelName(), ListName.Requests);
-        increaseProgressCount();
-        // await this.ensureListFolder(channelName, ListName.QA);
-        // increaseProgressCount();
         await this.ensureListFolder(this.sp.getChannelName(), ListName.Forms);
-        increaseProgressCount();
         await this.ensureListFolder(this.sp.getChannelName(), ListName.Duties);
-        increaseProgressCount();
         await this.ensureListFolder(this.sp.getChannelName(), ListName.RequiredDocuments);
-        increaseProgressCount();
         await this.ensureListFolder(this.sp.getChannelName(), ListName.Notifications);
-        increaseProgressCount();
         await this.ensureListFolder(this.sp.getChannelName(), ListName.ActionToTrigger);
-        increaseProgressCount();
         await this.ensureListFolder(this.sp.getChannelName(), ListName.Logs);
-        increaseProgressCount();
     }
 
     public async setListReadOnly(listName: ListName): Promise<void> {
@@ -320,7 +304,7 @@ export default class InstallApiClient implements IInstallApiClient {
     /**
          * check existence of all necessary columns in document library and create them if needed
          */
-    public async ensureDocumentLibrary(selectedTemplate: string, increaseProgressCount: () => void): Promise<void> {
+    public async ensureDocumentLibrary(selectedTemplate: string): Promise<void> {
         const apiUrl = `${this.sp.getAbsoluteUrl()}/_api/web/lists/getbytitle('${LibraryName.Documents}')`;
         const fieldsApiUrl = `${apiUrl}/fields`;
         const result = await this.sp.spGet(`${fieldsApiUrl}`);
@@ -378,20 +362,18 @@ export default class InstallApiClient implements IInstallApiClient {
         };
         const body = { 'EnableVersioning': true, 'EnableMinorVersions': true, "DraftVersionVisibility": 1 };
         await this.sp.spPost(apiUrl, body, headers);
-        await this.ensureFoldersInDocumentLibrary(selectedTemplate, increaseProgressCount);
+        await this.ensureFoldersInDocumentLibrary(selectedTemplate);
     }
 
     /**
          * Adds required files for categories under the current channel and copies template-related files.
          * Ensures each category folder exists in the RequiredDocuments list and copies files based on relations.
          * Calls the provided progress increment callback once the process completes.
-         *
-         * @param increaseProgressCount - Callback function to increment progress tracking.
          * @param relations - Array of template item relations to copy required files for.
          * @param templateName - Name of the template used for copying files.
          * @returns Promise that resolves when all required files are processed.
          */
-    public async addRequiredFiles(increaseProgressCount: () => void, relations: ITemplateItemRelation[], templateName: string): Promise<void> {
+    public async addRequiredFiles(relations: ITemplateItemRelation[], templateName: string): Promise<void> {
         const folderPath = `${this.sp.getRelativeUrl()}/lists/${ListName.Categories}/${this.sp.getChannelName()}`;
         const filter = `FileDirRef eq '${folderPath}'`;
         const apiUrl = `${this.sp.getAbsoluteUrl()}/_api/web/lists/getbytitle('${ListName.Categories}')/items?$select=Id&$filter=${filter}`;
@@ -405,7 +387,6 @@ export default class InstallApiClient implements IInstallApiClient {
             const relation = relations[i];
             await this.copyRequiredfiles(relation, templateName);
         }
-        increaseProgressCount();
     }
 
     /**
@@ -773,12 +754,11 @@ export default class InstallApiClient implements IInstallApiClient {
  * Calls folder creation for each folder template and updates progress via callback.
  * 
  * @param selectedTemplate - The name or identifier of the selected folder template.
- * @param increaseProgressCount - Callback function to update progress after each folder is ensured.
  */
-    private async ensureFoldersInDocumentLibrary(selectedTemplate: string, increaseProgressCount: () => void): Promise<void> {
+    private async ensureFoldersInDocumentLibrary(selectedTemplate: string): Promise<void> {
         const folderTemplates = await this.getFolderTemplates(selectedTemplate);
         const siteGroups = await this.sp.getSiteGroups(this.sp.getAbsoluteUrl());
-        await this.generateFoldersFromTemplates(folderTemplates, '', increaseProgressCount, siteGroups);
+        await this.generateFoldersFromTemplates(folderTemplates, '', siteGroups);
     }
 
     /**
@@ -799,9 +779,8 @@ export default class InstallApiClient implements IInstallApiClient {
          * recursively generate folders from templates loaded from site EUP-Sablony
          * @param folderTemplates 
          * @param parentFolderPath 
-         * @param increaseProgressCount 
          */
-    private async generateFoldersFromTemplates(folderTemplates: IFolderTemplate[], parentFolderPath: string, increaseProgressCount: () => void, siteGroups: ISiteGroup[]): Promise<void> {
+    private async generateFoldersFromTemplates(folderTemplates: IFolderTemplate[], parentFolderPath: string,  siteGroups: ISiteGroup[]): Promise<void> {
         for (let i = 0; i < folderTemplates.length; i++) {
             const folderTemplate = folderTemplates[i];
             const uniqueId = await this.createFolder(folderTemplate, parentFolderPath);
@@ -817,10 +796,8 @@ export default class InstallApiClient implements IInstallApiClient {
             }
             if (folderTemplate.templates) {
                 const path = `${parentFolderPath}/${folderTemplate.name}`;
-                await this.generateFoldersFromTemplates(folderTemplate.templates, path, increaseProgressCount, siteGroups);
-            } else {
-                increaseProgressCount();
-            }
+                await this.generateFoldersFromTemplates(folderTemplate.templates, path, siteGroups);
+            } 
         }
     }
 
@@ -874,17 +851,15 @@ export default class InstallApiClient implements IInstallApiClient {
     /**
  * Creates a folder structure based on the provided template items and updates progress.
  * @param templateItems The template content items used to create the folder structure.
- * @param increaseProgressCount A callback function to update the progress count.
  * @returns A promise indicating the completion of the folder structure creation.
  */
-    private async createCategories(templateItems: ITemplateContent[], increaseProgressCount: () => void): Promise<ITemplateItemRelation[]> {
+    private async createCategories(templateItems: ITemplateContent[]): Promise<ITemplateItemRelation[]> {
         const ids: ITemplateItemRelation[] = [];
         for (let i = 0; i < templateItems.length; i++) {
             const itemId = await this.createCategoryItem(templateItems[i]);
             if (itemId) {
                 ids.push({ itemId: itemId, templateId: templateItems[i].id });
             }
-            increaseProgressCount();
         }
         return ids;
     }
