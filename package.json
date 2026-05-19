@@ -36,6 +36,7 @@
     },
     "dependencies": {
         "@microsoft/microsoft-graph-types": "^2.43.1",
+        "@microsoft/sp-core-library": "^1.19.0",
         "@microsoft/sp-webpart-base": "^1.19.0",
         "@pnp/sp": "^4.20.0",
         "@syncfusion/ej2-react-inputs": "^26.2.14",
