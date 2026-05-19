@@ -4,7 +4,7 @@
         {
             "label": "deploy package",
             "type": "shell",
-            "command": "npm run test && npm run typecheck && npm run build && git add . && git diff --cached --name-status > .git/commit_changes.txt && git commit -F .git/commit_changes.txt",
+            "command": "npm run test && npm run typecheck && npm run build && git add . && git diff --cached --name-status > .git/commit_changes.txt && git commit -F .git/commit_changes.txt && npm version patch",
             "group": "test",
             "problemMatcher": []
         }

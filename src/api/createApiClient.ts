@@ -1,6 +1,5 @@
 import { WebPartContext } from "@microsoft/sp-webpart-base";
 import ApiClient from "./ApiClient";
-import { IApiClient } from "./IApiClient";
 
 export const createApiClient = async (
     context: WebPartContext,
@@ -10,7 +9,7 @@ export const createApiClient = async (
     ctx?: string,
     queryTeamId?: string,
     queryChannelId?: string
-): Promise<IApiClient> => {
+): Promise<ApiClient> => {
     const client = new ApiClient(context, internalSiteName, templateSiteName, eupNoReplyMail);
     if (ctx || (queryTeamId && queryChannelId)) {
         await client.sp.init(ctx, queryTeamId, queryChannelId);
