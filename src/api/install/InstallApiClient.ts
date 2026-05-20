@@ -756,6 +756,8 @@ export default class InstallApiClient implements IInstallApiClient {
  * @param selectedTemplate - The name or identifier of the selected folder template.
  */
     private async ensureFoldersInDocumentLibrary(selectedTemplate: string): Promise<void> {
+        const path = `${this.sp.getRelativeUrl()}/${this.documentFolder}`;
+        await this.sp.ensureFolder(path, this.sp.getChannelName());
         const folderTemplates = await this.getFolderTemplates(selectedTemplate);
         const siteGroups = await this.sp.getSiteGroups(this.sp.getAbsoluteUrl());
         await this.generateFoldersFromTemplates(folderTemplates, '', siteGroups);
@@ -780,7 +782,7 @@ export default class InstallApiClient implements IInstallApiClient {
          * @param folderTemplates 
          * @param parentFolderPath 
          */
-    private async generateFoldersFromTemplates(folderTemplates: IFolderTemplate[], parentFolderPath: string,  siteGroups: ISiteGroup[]): Promise<void> {
+    private async generateFoldersFromTemplates(folderTemplates: IFolderTemplate[], parentFolderPath: string, siteGroups: ISiteGroup[]): Promise<void> {
         for (let i = 0; i < folderTemplates.length; i++) {
             const folderTemplate = folderTemplates[i];
             const uniqueId = await this.createFolder(folderTemplate, parentFolderPath);
@@ -797,7 +799,7 @@ export default class InstallApiClient implements IInstallApiClient {
             if (folderTemplate.templates) {
                 const path = `${parentFolderPath}/${folderTemplate.name}`;
                 await this.generateFoldersFromTemplates(folderTemplate.templates, path, siteGroups);
-            } 
+            }
         }
     }
 
